@@ -4,7 +4,10 @@ import { UpdateTodoRequest } from "../requests/updateTodoRequest";
 const uuid = require('uuid/v4')
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
+import {TodoListResult} from "../dataViewModels/todoListresult"
+import { createLogger } from '../utils/logger'
 
+const logger = createLogger('todos')
 
 
 export class TodosAccess{
@@ -16,16 +19,30 @@ export class TodosAccess{
     )
         {}
 
-    async getUserTodos(userId: string): Promise<TodoItem[]>{
-        const result = await this.docClient.query({
+    async getUserTodos(userId: string,lastKey?: string): Promise<TodoListResult>{
+        logger.info(`query start key is ${lastKey}`)
+        const param = {
             TableName: this.todosTable,
             IndexName: this.userIdIndex,
             KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues:{
                 ':userId':userId
+            },
+            Limit: 5
+        }
+        if(lastKey){
+            param.ExclusiveStartKey= {
+                "todoId": lastKey,
+                "userId": userId
             }
-        }).promise()
-        return result.Items as TodoItem[]
+        }
+        const dataResult = await this.docClient
+                                        .query(param)
+                                        .promise()
+        const result = new TodoListResult()
+        result.data = dataResult.Items as TodoItem[]
+        result.lastId = dataResult.LastEvaluatedKey ? dataResult.LastEvaluatedKey['todoId'] : null
+        return result
     }
 
     async createTodo(request: CreateTodoRequest,userId: string): Promise<TodoItem>{

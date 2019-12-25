@@ -1,7 +1,7 @@
 {
-  "name": "todos",
+  "name": "udacity-developer-capstone-backend",
   "version": "1.0.0",
-  "description": "Udacity Serverless project",
+  "description": "Udacity Serverless Capstone project - backend",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

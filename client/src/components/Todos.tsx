@@ -11,7 +11,8 @@ import {
   Icon,
   Input,
   Image,
-  Loader
+  Loader,
+  Label
 } from 'semantic-ui-react'
 
 import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
@@ -25,6 +26,7 @@ interface TodosProps {
 
 interface TodosState {
   todos: Todo[]
+  lastId?: object
   newTodoName: string
   loadingTodos: boolean
 }
@@ -93,7 +95,8 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     try {
       const todos = await getTodos(this.props.auth.getIdToken())
       this.setState({
-        todos,
+        todos: todos.data,
+        lastId: todos.lastId,
         loadingTodos: false
       })
     } catch (e) {
@@ -201,8 +204,17 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
             </Grid.Row>
           )
         })}
+        <this.RenderMoreButton />
       </Grid>
+      
     )
+  }
+
+   RenderMoreButton(){
+    // if(this.state.lastId){
+    //   return <Button>More</Button>
+    // }
+    return <Label>No more todos</Label>
   }
 
   calculateDueDate(): string {

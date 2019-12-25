@@ -1,5 +1,5 @@
 service:
-  name: todos
+  name: udacity-developer-capstone-backend
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -45,8 +45,8 @@ provider:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    TODO_TABLE: Todos-${self:provider.stage}
-    IMAGES_BUCKET: udacity-todos-${self:provider.stage}
+    TODO_TABLE: capstone-${self:provider.stage}
+    IMAGES_BUCKET: udacity-capstone-${self:provider.stage}
     USER_ID_INDEX: userId
   tracing:
     lambda: true

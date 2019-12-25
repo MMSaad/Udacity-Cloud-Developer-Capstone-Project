@@ -15,9 +15,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     const authHeader = event.headers['Authorization']
     const userId = getUserId(authHeader) 
     logger.info(`get groups for user ${userId}`)
-    const result = await new TodosAccess().getUserTodos(userId)
+    const todoId = event.queryStringParameters.todoId
+    logger.info(`query start key is ${todoId}`)
+    const result = await new TodosAccess().getUserTodos(userId,todoId)
       
-    for(const record of result){
+    for(const record of result.data){
         record.attachmentUrl = await s3Helper.getTodoAttachmentUrl(record.todoId)
     }
 
