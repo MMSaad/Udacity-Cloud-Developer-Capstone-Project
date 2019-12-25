@@ -2,7 +2,9 @@ import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 
 
-
+/**
+ * Common S3 functions
+ */
 export class S3Helper{
 
     constructor(
@@ -16,6 +18,11 @@ export class S3Helper{
     ){
         
     }
+
+    /**
+     * Generate attachment presigned Get-Url 
+     * @param todoId ToDo id
+     */
     async getTodoAttachmentUrl(todoId: string): Promise<string>{
         
         try{
@@ -35,6 +42,10 @@ export class S3Helper{
         return null
     }
 
+    /**
+     * Generate attachment presigned Put-Url
+     * @param todoId ToDo Id
+     */
     getPresignedUrl(todoId: string): string{
         return this.s3.getSignedUrl('putObject', {
             Bucket: process.env.IMAGES_BUCKET,

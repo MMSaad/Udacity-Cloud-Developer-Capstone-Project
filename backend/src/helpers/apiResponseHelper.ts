@@ -1,7 +1,18 @@
 import {  APIGatewayProxyResult } from 'aws-lambda'
 
+
+/**
+ * Helper method to return Lambda function response
+ * Including Access-Control-Allow-Origin header
+ */
 export class ApiResponseHelper{
 
+    /**
+     * generate success response with custom result objecct name
+     * @param statusCode Response http status code
+     * @param key result object name
+     * @param items result object
+     */
     generateDataSuccessResponse(statusCode: number,key: string, items: any): APIGatewayProxyResult{
         return {
             statusCode: statusCode,
@@ -14,6 +25,10 @@ export class ApiResponseHelper{
           }
     }
     
+    /**
+     * generate empty response
+     * @param statusCode Response http status code
+     */
     generateEmptySuccessResponse(statusCode: number): APIGatewayProxyResult{
         return {
             statusCode: statusCode,
@@ -24,6 +39,11 @@ export class ApiResponseHelper{
           }
     }
 
+    /**
+     * generate error response 
+     * @param statusCode Response http status code
+     * @param message Error message
+     */
     generateErrorResponse(statusCode: number,message:string): APIGatewayProxyResult{
         return {
             statusCode: statusCode,
