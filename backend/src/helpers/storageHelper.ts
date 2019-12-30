@@ -5,7 +5,7 @@ import * as AWSXRay from 'aws-xray-sdk'
 /**
  * Common S3 functions
  */
-export class S3Helper{
+export class StorageHelper{
 
     constructor(
         private readonly XAWS = AWSXRay.captureAWS(AWS),

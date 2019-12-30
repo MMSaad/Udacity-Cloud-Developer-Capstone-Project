@@ -55,6 +55,7 @@ provider:
 
   
 functions:
+
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
   
@@ -150,6 +151,7 @@ functions:
           - logs:CreateLogStream
           - logs:CreateLogGroup
           - logs:PutLogEvents
+          - events:PutRule
         Resource: "*"
 
   UpdateTodo:

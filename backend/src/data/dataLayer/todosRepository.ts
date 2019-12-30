@@ -1,16 +1,20 @@
-import { TodoItem } from "../models/todoItem";
-import { CreateTodoRequest } from "../requests/createTodoRequest";
-import { UpdateTodoRequest } from "../requests/updateTodoRequest";
-const uuid = require('uuid/v4')
+/// Imports
+import { TodoItem } from "../models/todo";
+import { CreateTodoRequest } from "../../requests/createTodoRequest";
+import { UpdateTodoRequest } from "../../requests/updateTodoRequest";
 import * as AWS from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
-import {TodoListResult} from "../dataViewModels/todoListresult"
-import { createLogger } from '../utils/logger'
+import { createLogger } from '../../utils/logger'
 
+/// Variables
 const logger = createLogger('todos')
+const uuid = require('uuid/v4')
 
 
-export class TodosAccess{
+/**
+ * Todos repository for Todo's CURD operations
+ */
+export class TodosRepository{
     constructor(
         private readonly XAWS = AWSXRay.captureAWS(AWS),
         private readonly docClient: AWS.DynamoDB.DocumentClient = new XAWS.DynamoDB.DocumentClient(),
@@ -19,8 +23,11 @@ export class TodosAccess{
     )
         {}
 
-    async getUserTodos(userId: string,lastKey?: string): Promise<TodoListResult>{
-        logger.info(`query start key is ${lastKey}`)
+    /**
+     * Get authorized user todos list
+     * @param userId Authorized user id
+     */
+    async getUserTodos(userId: string): Promise<TodoItem[]>{
         const param = {
             TableName: this.todosTable,
             IndexName: this.userIdIndex,
@@ -30,40 +37,39 @@ export class TodosAccess{
             },
             Limit: 5
         }
-        if(lastKey){
-            param.ExclusiveStartKey= {
-                "todoId": lastKey,
-                "userId": userId
-            }
-        }
+        
         const dataResult = await this.docClient
                                         .query(param)
                                         .promise()
-        const result = new TodoListResult()
-        result.data = dataResult.Items as TodoItem[]
-        result.lastId = dataResult.LastEvaluatedKey ? dataResult.LastEvaluatedKey['todoId'] : null
-        return result
+        return dataResult.Items as TodoItem[]
     }
 
+    /**
+     * Create new Todo Item
+     * @param request Create todo data
+     * @param userId Logged user id
+     */
     async createTodo(request: CreateTodoRequest,userId: string): Promise<TodoItem>{
-        const newId = uuid()
-        const item = new TodoItem()
-        item.userId= userId
-        item.todoId= newId
-        item.createdAt= new Date().toISOString()
-        item.name= request.name
-        item.dueDate= request.dueDate
-        item.done= false
-  
+        const item:TodoItem = {
+            userId: userId,
+            todoId: uuid(),
+            createdAt: new Date().toISOString(),
+            name: request.name,
+            dueDate: request.dueDate,
+            done: false
+        }
         await this.docClient.put({
             TableName: this.todosTable,
             Item: item
         }).promise()
-
         return item
     }
-
-
+    
+    
+    /**
+     * Get Todo record by Id
+     * @param id Todo Id
+     */
     async getTodoById(id: string): Promise<AWS.DynamoDB.QueryOutput>{
         return await this.docClient.query({
             TableName: this.todosTable,
@@ -74,6 +80,11 @@ export class TodosAccess{
         }).promise()
     }
 
+    /**
+     * Update existing Todo record
+     * @param updatedTodo Update field details
+     * @param todoId Todo Id
+     */
     async updateTodo(updatedTodo:UpdateTodoRequest,todoId:string){
         await this.docClient.update({
             TableName: this.todosTable,
@@ -92,6 +103,11 @@ export class TodosAccess{
           }).promise()
     }
 
+
+    /**
+     * Delete Todo record
+     * @param todoId Todo Id
+     */
     async deleteTodoById(todoId: string){
         const param = {
             TableName: this.todosTable,
@@ -99,7 +115,6 @@ export class TodosAccess{
                 "todoId":todoId
             }
         }
-      
          await this.docClient.delete(param).promise()
     }
     

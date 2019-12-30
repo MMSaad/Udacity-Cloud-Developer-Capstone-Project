@@ -1,25 +1,36 @@
+/// Imports
 import 'source-map-support/register'
-
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { CreateTodoRequest } from '../../requests/createTodoRequest'
-import { getUserId} from '../../helpers/authHelper'
-import { TodosAccess } from '../../dataLayer/todosAccess'
-import { ApiResponseHelper } from '../../helpers/apiResponseHelper'
+import { AuthHelper } from '../../helpers/authHelper'
+import { TodosRepository } from '../../data/dataLayer/todosRepository'
+import { ResponseHelper } from '../../helpers/responseHelper'
 import { createLogger } from '../../utils/logger'
 
-const logger = createLogger('todos')
 
+/// Variables
+const logger = createLogger('todos')
+const authHelper = new AuthHelper()
+
+/**
+ * Create new Todo Item
+ * @param event API gateway event
+ */
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
+    // parse todo field from event body
     const newTodo: CreateTodoRequest = JSON.parse(event.body)
 
-    const authHeader = event.headers['Authorization']
-    const userId = getUserId(authHeader)
-    logger.info(`create group for user ${userId} with data ${newTodo}`)
-    const item = await new TodosAccess()
+    // get user id using JWT from Authorization header
+    const userId = authHelper.getUserId(event.headers['Authorization'])
+    logger.info(`create todo for user ${userId} with data ${newTodo}`)
+
+    // Save todo item to database
+    const item = await new TodosRepository()
                             .createTodo(newTodo,userId)
-    
-    return new ApiResponseHelper()
+
+    // return success response                            
+    return new ResponseHelper()
                 .generateDataSuccessResponse(201,'item',item)
 
 }

@@ -5,7 +5,7 @@ import {  APIGatewayProxyResult } from 'aws-lambda'
  * Helper method to return Lambda function response
  * Including Access-Control-Allow-Origin header
  */
-export class ApiResponseHelper{
+export class ResponseHelper{
 
     /**
      * generate success response with custom result objecct name

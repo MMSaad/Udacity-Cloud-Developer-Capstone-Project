@@ -5,7 +5,7 @@ import Axios from 'axios'
 import { UpdateTodoRequest } from '../types/UpdateTodoRequest';
 import { TodoListResult} from '../dataViewModels/TodoListResult'
 
-export async function getTodos(idToken: string): Promise<TodoListResult> {
+export async function getTodos(idToken: string): Promise<Todo[]> {
   console.log('Fetching todos')
 
   const response = await Axios.get(`${apiEndpoint}/todos`, {
@@ -15,10 +15,7 @@ export async function getTodos(idToken: string): Promise<TodoListResult> {
     },
   })
   console.log('Todos:', response.data)
-  return {
-    data: response.data.items.data,
-    lastId: response.data.lastId
-  }
+  return  response.data.items
   
 }
 

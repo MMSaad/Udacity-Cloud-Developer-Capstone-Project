@@ -1,27 +1,36 @@
+/// Imports
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import { getUserId} from '../../helpers/authHelper'
-import { TodosAccess } from '../../dataLayer/todosAccess'
-import { S3Helper } from '../../helpers/s3Helper'
-import { ApiResponseHelper } from '../../helpers/apiResponseHelper'
+import { AuthHelper } from '../../helpers/authHelper'
+import { TodosRepository } from '../../data/dataLayer/todosRepository'
+import { StorageHelper } from '../../helpers/storageHelper'
+import { ResponseHelper } from '../../helpers/responseHelper'
 import { createLogger } from '../../utils/logger'
 
-const s3Helper = new S3Helper()
-const apiResponseHelper= new ApiResponseHelper()
+/// Variables
+const s3Helper = new StorageHelper()
+const apiResponseHelper= new ResponseHelper()
 const logger = createLogger('todos')
+const authHelper = new AuthHelper()
 
+/**
+ * Get authorized user todos list
+ * @param event API gateway Event
+ */
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
-    const authHeader = event.headers['Authorization']
-    const userId = getUserId(authHeader) 
+    // get user id using JWT from Authorization header
+    const userId = authHelper.getUserId(event.headers['Authorization']) 
     logger.info(`get groups for user ${userId}`)
-    const todoId = event.queryStringParameters?.todoId
-    logger.info(`query start key is ${todoId}`)
-    const result = await new TodosAccess().getUserTodos(userId,todoId)
-      
-    for(const record of result.data){
+
+    // Get user's Todos
+    const result = await new TodosRepository().getUserTodos(userId)
+    
+    // Generate todos pre-signed get url
+    for(const record of result){
         record.attachmentUrl = await s3Helper.getTodoAttachmentUrl(record.todoId)
     }
 
+    // return success response
     return apiResponseHelper.generateDataSuccessResponse(200,'items',result)
 }

@@ -3,11 +3,16 @@ import {  decode } from 'jsonwebtoken'
 
 
 /**
+ * Authorization helper
+ * for common Authorization functions
+ */
+export class AuthHelper{
+/**
  * Decode JWT and return User Id (sub)
  * @param authHeader Authorization Header
  */
-export function getUserId(authHeader: string): string{
-  const token = getToken(authHeader)
+  getUserId(authHeader: string): string{
+  const token = this.getToken(authHeader)
   const jwt: Jwt = decode(token, { complete: true }) as Jwt
   return jwt.payload.sub
 }
@@ -18,7 +23,7 @@ export function getUserId(authHeader: string): string{
  * extract JWT from authorization header
  * @param authHeader Authorization Header
  */
-function getToken(authHeader: string): string {
+ getToken(authHeader: string): string {
     if (!authHeader)
      throw new Error('No authentication header')
   
@@ -30,3 +35,5 @@ function getToken(authHeader: string): string {
   
     return token
   }
+
+}
