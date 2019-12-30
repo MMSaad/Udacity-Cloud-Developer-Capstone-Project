@@ -26,9 +26,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     // Get user's Todos
     const result = await new TodosRepository().getUserTodos(userId)
     
-    // Generate todos pre-signed get url
+    // Generate todos pre-signed get url for todos with uploaded images
     for(const record of result){
-        record.attachmentUrl = await s3Helper.getTodoAttachmentUrl(record.todoId)
+        if(record.hasImage){
+            record.attachmentUrl = await s3Helper.getTodoAttachmentUrl(record.todoId)
+        }
     }
 
     // return success response

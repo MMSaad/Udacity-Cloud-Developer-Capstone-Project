@@ -6,5 +6,6 @@ export class TodoItem {
     dueDate: string
     done: boolean
     attachmentUrl?: string
+    hasImage: boolean
   }
   

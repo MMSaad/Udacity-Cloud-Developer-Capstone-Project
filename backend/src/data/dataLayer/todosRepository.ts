@@ -54,7 +54,8 @@ export class TodosRepository{
             createdAt: new Date().toISOString(),
             name: request.name,
             dueDate: request.dueDate,
-            done: false
+            done: false,
+            hasImage: false
         }
         await this.docClient.put({
             TableName: this.todosTable,
@@ -76,6 +77,19 @@ export class TodosRepository{
                 ':todoId': id
             }
         }).promise()
+    }
+
+    async updateTodoImageFlag(todoId:string){
+        await this.docClient.update({
+            TableName: this.todosTable,
+            Key:{
+                'todoId':todoId
+            },
+            UpdateExpression: 'set  hasImage = :t',
+            ExpressionAttributeValues: {
+                ':t' : true
+            }
+          }).promise()
     }
 
     /**

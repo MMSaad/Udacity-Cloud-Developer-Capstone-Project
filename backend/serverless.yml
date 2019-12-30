@@ -58,6 +58,31 @@ functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
+
+  ImageUploaded:
+    handler: src/lambda/s3/s3ImageUploaded.handler
+    events:
+      - s3:
+          bucket: ${self:provider.environment.IMAGES_BUCKET}
+          event: s3:ObjectCreated:*
+          existing: true
+    iamRoleStatementsName: Image-Uploaded
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+        Resource: "*"
+      - Effect: Allow
+        Action:
+          - logs:CreateLogStream
+          - logs:CreateLogGroup
+          - logs:PutLogEvents
+        Resource: "*"
   
   GetTodos:
     handler: src/lambda/http/getTodos.handler

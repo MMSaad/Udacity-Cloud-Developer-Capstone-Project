@@ -35,7 +35,7 @@ npm run start
 ## Current Deplyment details
 API Endpoint
 ```
-https://e2mg7iqieb.execute-api.us-east-1.amazonaws.com/dev/todos
+https://2z9sdic1hj.execute-api.us-east-1.amazonaws.com/dev/todos
 ```
 Postman Collection
 ```
