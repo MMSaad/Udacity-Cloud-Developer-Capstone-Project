@@ -43,7 +43,60 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Water flowers\",\n\t\"dueDate\": \"2019-06-11\"\n}"
+							"raw": "{\n\t\"name\": \"Water flowers\",\n\t\"dueDate\": \"2019-12-26\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create todo Invalid input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f4a64acd-232e-45c7-946e-dd15305e9740",
+								"exec": [
+									"pm.test(\"Status code is 400\",function(){",
+									"    pm.expect(pm.response.code).to.be.equal(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Water flowers\",\n\t\"dueDate\": \"2019-12-26\",\n\t\"demo\":\"demo\"\n}"
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos",
@@ -152,6 +205,60 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"Change the world\",\n\t\"dueDate\": \"2019-12-11\",\n\t\"done\": true\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos/{{newTodoId}}",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos",
+								"{{newTodoId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update todo invalid input",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4947c1a7-a4ac-49b0-a330-433ca5956616",
+								"exec": [
+									"pm.test(\"Status code is 400\",function(){",
+									"    pm.expect(pm.response.code).to.be.equal(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Change the world\",\n\t\"dueDate\": \"2019-12-11\",\n\t\"done\": true,\n\t\"demo\":\"demo\"\n}"
 						},
 						"url": {
 							"raw": "https://{{apiId}}.execute-api.us-east-1.amazonaws.com/dev/todos/{{newTodoId}}",
@@ -325,13 +432,13 @@
 	],
 	"variable": [
 		{
-			"id": "6242a9d0-fc2e-4304-b9cd-b6ef91dec546",
+			"id": "d8f32e26-5f73-4085-b880-1899bcaab39d",
 			"key": "apiId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "0713d385-75a2-49f5-be3c-8b59ffb77414",
+			"id": "28734378-ca65-4284-a901-4933736941ae",
 			"key": "authToken",
 			"value": "",
 			"type": "string"
