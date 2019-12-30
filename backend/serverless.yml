@@ -1,9 +1,5 @@
 service:
   name: udacity-developer-capstone-backend
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
-
 
 plugins:
   - serverless-webpack
@@ -37,7 +33,6 @@ custom:
         schema: ${file(validators/update-todo-request.json)}
         
 
-
 provider:
   name: aws
   runtime: nodejs12.x
@@ -52,12 +47,22 @@ provider:
     lambda: true
     apiGateway: true
 
-
-  
 functions:
 
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
+    iamRoleStatementsName: Auth-User
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - xray:PutTraceSegments
+        Resource: "*"
+      - Effect: Allow
+        Action:
+          - logs:CreateLogStream
+          - logs:CreateLogGroup
+          - logs:PutLogEvents
+        Resource: "*"
 
   ImageUploaded:
     handler: src/lambda/s3/s3ImageUploaded.handler
@@ -117,9 +122,6 @@ functions:
           authorizer: Auth
           cors: true
     
-
-
-
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
     events:
@@ -145,7 +147,6 @@ functions:
           - logs:CreateLogGroup
           - logs:PutLogEvents
         Resource: "*"
-
 
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
