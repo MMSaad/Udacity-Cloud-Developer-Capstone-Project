@@ -7,15 +7,16 @@ import {  decode } from 'jsonwebtoken'
  * for common Authorization functions
  */
 export class AuthHelper{
+
 /**
  * Decode JWT and return User Id (sub)
  * @param authHeader Authorization Header
  */
   getUserId(authHeader: string): string{
-  const token = this.getToken(authHeader)
-  const jwt: Jwt = decode(token, { complete: true }) as Jwt
-  return jwt.payload.sub
-}
+    const token = this.getToken(authHeader)
+    const jwt: Jwt = decode(token, { complete: true }) as Jwt
+    return jwt.payload.sub
+  }
 
 
 

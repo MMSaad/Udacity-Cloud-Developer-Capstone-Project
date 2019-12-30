@@ -1,5 +1,4 @@
-import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+import { XawsHelper} from "./xawsHelper"
 
 
 /**
@@ -8,12 +7,7 @@ import * as AWSXRay from 'aws-xray-sdk'
 export class StorageHelper{
 
     constructor(
-        private readonly XAWS = AWSXRay.captureAWS(AWS),
-        private readonly  s3:AWS.S3 = new XAWS.S3({
-            signatureVersion: 'v4',
-            region: process.env.region,
-            params: {Bucket: process.env.IMAGES_BUCKET}
-          }),
+        private readonly  s3:AWS.S3 = new XawsHelper().getS3(process.env.region,process.env.IMAGES_BUCKET) ,
           private readonly  signedUrlExpireSeconds = 60 * 5
     ){
         
@@ -24,7 +18,6 @@ export class StorageHelper{
      * @param todoId ToDo id
      */
     async getTodoAttachmentUrl(todoId: string): Promise<string>{
-        
         try{
             await this.s3.headObject({
             Bucket: process.env.IMAGES_BUCKET,

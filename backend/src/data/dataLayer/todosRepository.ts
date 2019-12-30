@@ -2,22 +2,20 @@
 import { TodoItem } from "../models/todo";
 import { CreateTodoRequest } from "../../requests/createTodoRequest";
 import { UpdateTodoRequest } from "../../requests/updateTodoRequest";
-import * as AWS from 'aws-sdk'
-import * as AWSXRay from 'aws-xray-sdk'
+import { XawsHelper} from "../../helpers/xawsHelper"
 import { createLogger } from '../../utils/logger'
 
 /// Variables
 const logger = createLogger('todos')
 const uuid = require('uuid/v4')
-
+const xaws = new XawsHelper()
 
 /**
  * Todos repository for Todo's CURD operations
  */
 export class TodosRepository{
     constructor(
-        private readonly XAWS = AWSXRay.captureAWS(AWS),
-        private readonly docClient: AWS.DynamoDB.DocumentClient = new XAWS.DynamoDB.DocumentClient(),
+        private readonly docClient = xaws.getDocumentClient(),
         private readonly todosTable = process.env.TODO_TABLE,
         private readonly userIdIndex = process.env.USER_ID_INDEX
     )
